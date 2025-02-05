@@ -5,7 +5,7 @@ module "vpc" {
   name = "lambda_vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["eu-central-1a", "eu-central-1b"]
+  azs             = ["us-east-1a", "us-east-1b"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
 
@@ -33,9 +33,6 @@ module "vpc" {
   ]
 
   default_security_group_name = "lambda_default_vpc_sg"
-  default_security_group_tags = {
-    Name = "lambda_default_vpc_sg"
-  }
 }
 
 resource "aws_security_group" "allow_ssh" {
