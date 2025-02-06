@@ -1,13 +1,13 @@
 resource "aws_cloudtrail" "cloudtrail_iam_sg" {
   depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
 
-  name                          = "cloudtrail_iam_sg"
-  s3_bucket_name                = aws_s3_bucket.cloudtrail_logs.id
-  s3_key_prefix                 = "prefix"
+  name           = "cloudtrail_iam_sg"
+  s3_bucket_name = aws_s3_bucket.cloudtrail_logs.id
+  s3_key_prefix  = "prefix"
 }
 
 resource "aws_s3_bucket" "cloudtrail_logs" {
-  bucket        = "cloudtrail-logs-for-eventbridge-lambda"
+  bucket        = "cloudtrail-logs-eventbridge-lambda"
   force_destroy = true
 }
 
