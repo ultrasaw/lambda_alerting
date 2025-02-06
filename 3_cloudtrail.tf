@@ -1,7 +1,7 @@
-resource "aws_cloudtrail" "cloudtrail_iam_sg" {
+resource "aws_cloudtrail" "trail" {
   depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
 
-  name           = "cloudtrail_iam_sg"
+  name           = "cloudtrail_mgmnt_all"
   s3_bucket_name = aws_s3_bucket.cloudtrail_logs.id
   s3_key_prefix  = "prefix"
 }
