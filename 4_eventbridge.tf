@@ -2,7 +2,7 @@ module "eventbridge" {
   source  = "terraform-aws-modules/eventbridge/aws"
   version = "3.14.3"
 
-  create_bus = false # 'default' bus; a custom one would require additional routing configuration.
+  create_bus = false # use the 'default' bus; a custom one requires additional routing setup.
 
   rules = {
     iam_user_or_key_api = {
