@@ -14,7 +14,7 @@ def find_arn(obj):
             if isinstance(value, str) and value.startswith("arn:"):
                 return value
             result = find_arn(value)
-            if result and result != "N/A": # not None or an empty string, & not "N/A"
+            if result and result != "N/A":
                 return result
     elif isinstance(obj, list):
         for item in obj:
@@ -39,15 +39,20 @@ def lambda_handler(event, context):
     user_identity = detail.get('userIdentity', {})
     initiator = user_identity.get('userName', 'N/A')
 
-    # Find the ARN in responseElements
+    # Extract responseElements
     response_elements = detail.get('responseElements', {})
-    resource_arn = find_arn(response_elements)
+
+    # If 'accessKey' exists, return its userName instead of ARN
+    if 'accessKey' in response_elements:
+        resource_identifier = response_elements['accessKey'].get('userName', 'N/A')
+    else:
+        resource_identifier = find_arn(response_elements)
 
     # Log extracted details
     logger.info(f"Time: {event_time}")
     logger.info(f"Action: {event_name}")
     logger.info(f"Initiator: {initiator}")
-    logger.info(f"Resource ARN: {resource_arn}")
+    logger.info(f"ResourceIdentifier: {resource_identifier}")
 
     return {
         'statusCode': 200,
@@ -55,6 +60,6 @@ def lambda_handler(event, context):
             'Time': event_time,
             'Action': event_name,
             'Initiator': initiator,
-            'ResourceARN': resource_arn
+            'ResourceIdentifier': resource_identifier
         })
     }
