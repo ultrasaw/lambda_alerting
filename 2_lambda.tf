@@ -20,9 +20,13 @@ module "lambda_function" {
   maximum_retry_attempts       = 1
 
   allowed_triggers = {
-    iam_api_rule = {
+    iam_rule = {
       principal  = "events.amazonaws.com"
-      source_arn = module.eventbridge.eventbridge_rule_arns["iam_user_or_key_api"]
+      source_arn = module.eventbridge.eventbridge_rule_arns["iam_user_or_key"]
+    }
+    sg_ingress_rule = {
+      principal  = "events.amazonaws.com"
+      source_arn = module.eventbridge.eventbridge_rule_arns["sg_ingress_change"]
     }
   }
 
