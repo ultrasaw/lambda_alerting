@@ -19,9 +19,12 @@ jobs:
     needs: static-analysis
     uses: ./.github/workflows/terraform-validate.yml
 
-  # plan:
-  #   needs: validate
-  #   uses: ./.github/workflows/terraform-plan.yml
+  plan:
+    permissions:
+      id-token: write
+      contents: read
+    needs: validate
+    uses: ./.github/workflows/terraform-plan.yml
 
   # apply:
   #   needs: plan
