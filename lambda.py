@@ -40,6 +40,13 @@ def lambda_handler(event, context):
         action = f"{compliance_type}: {annotation}"
         initiator = detail.get('awsAccountId', 'N/A')
         resource_identifier = detail.get('resourceId', 'N/A')
+    elif detail.get('eventSource') == 's3.amazonaws.com':
+        # Extract details specific to AWS S3 events
+        action = detail.get('eventName', 'N/A')
+        user_identity = detail.get('userIdentity', {})
+        initiator = user_identity.get('userName', 'N/A')
+        resources = detail.get('resources', [])
+        resource_identifier = next((res.get('ARN', 'N/A') for res in resources if res.get('type') == 'AWS::S3::Bucket'), 'N/A')
     else:
         # Extract general details
         event_name = detail.get('eventName', 'N/A')
