@@ -22,10 +22,13 @@ jobs:
         with:
           terraform_version: 1.8.0
 
-      - name: Download Plan Artifact
-        uses: actions/download-artifact@v4
+      - name: Download Plan and Builds Directory
+        uses: actions/download-artifact@v3
         with:
-          name: terraform-plan
+          name: terraform-artifacts
+
+      - name: Verify Artifacts
+        run: ls -R
 
       - name: Terraform Init
         run: terraform init

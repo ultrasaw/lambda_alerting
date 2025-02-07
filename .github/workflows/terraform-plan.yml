@@ -28,8 +28,11 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=plan.tfplan
 
-      - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Plan and Builds Directory
+        uses: actions/upload-artifact@v3
         with:
-          name: terraform-plan
-          path: plan.tfplan
+          name: terraform-artifacts
+          path: |
+            plan.tfplan
+            builds/
+          retention-days: 1
