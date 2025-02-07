@@ -1,5 +1,5 @@
 # lambda_alerting
-A serverless solution using AWS Lambda to monitor and alert on specific security-related events in an AWS environment. The infrastructure is defined using Terraform and GitHub Actions. AWS Services used:
+A serverless solution using AWS Lambda to monitor and alert on specific security-related events in an AWS environment. The infrastructure is defined with Terraform and deployed via GitHub Actions. AWS Services used:
 - Lambda - notifies SNS on mutliple security events.
 - EventBridge - EB Rules invoke Lambda functions.
 - AWS Config - monitors Security Groups for Non-compliance (any TCP/UDP port open to 0.0.0.0/0).
