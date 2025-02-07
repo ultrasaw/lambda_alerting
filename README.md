@@ -139,7 +139,7 @@ During development, you can manually:
 - Test AWS Config Ingress non-compliance by opening any Security Group TCP/UDP port to 0.0.0.0/0.
 
 ## A note on using Terraform modules
-Modules provide abstraction over complex AWS resources, speeding up infrastructure setup with good defaults. For example, the 'lambda' module includes a boolean parameter `attach_create_log_group_permission` that controls whether to add the *create log group* permission to the CloudWatch logs policy.
+Modules provide abstraction over complex AWS resources, speeding up infrastructure setup with good defaults. For example, the **lambda** module includes a `bool` parameter `attach_create_log_group_permission` that controls whether to add the *create log group* permission to the CloudWatch logs policy.
 
 Disadvantages include relying on an externally developed module, lack of documentation and inapplicable defaults.
 
