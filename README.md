@@ -5,7 +5,7 @@ A serverless solution using AWS Lambda to monitor and alert on specific security
 AWS Services used:
 - Lambda - notifies SNS on mutliple security events.
 - EventBridge (formerly CloudWatch Events) - EB Rules invoke Lambda function when triggered by Events from CloudTrail and AWS Config.
-- AWS Config - monitors Security Groups for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
+- AWS Config - monitors Security Groups ingress for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
 - CloudTrail - logs Management events, e.g. creation if IAM users.
 - SNS - destination for successful Lambda invocations.
 - SQS - destination for failed Lambda invocations. Failures could be processed by another AWS service at a later stage.
@@ -136,7 +136,7 @@ During development, you can manually:
 
 - Test Lambda Function Invocations within the Console UI and inspect the respective CloudWatch logs.
 - Test EventBridge Rules by using sample events.
-- Test AWS Config Ingress non-compliance by opening any Security Group TCP/UDP port to 0.0.0.0/0.
+- Test AWS Config Security Group ingress non-compliance by opening any TCP/UDP port to 0.0.0.0/0.
 
 ## A note on using Terraform modules
 Modules provide abstraction over complex AWS resources, speeding up infrastructure setup with good defaults. For example, the **lambda** module includes a `bool` parameter `attach_create_log_group_permission` that controls whether to add the *create log group* permission to the CloudWatch logs policy.
@@ -156,7 +156,7 @@ Terraform:
 - Terraform initialization output is not cached, leading to longer job initialization times in GitHub Actions jobs.
 
 Ingress rules monitoring:
-- Non-private IP range: For simplicity sake, Ingress of Security Groups will be monitored for TCP/UDP ports exposed to 0.0.0.0/0 only; this might not equate to a non-private IP range definition of IETF. See [Reserved IP ranges](https://en.wikipedia.org/wiki/Reserved_IP_addresses).
+- Non-private IP range: For simplicity sake, ingress of Security Groups will be monitored for TCP/UDP ports exposed to 0.0.0.0/0 only; this might not equate to a non-private IP range definition of IETF. See [Reserved IP ranges](https://en.wikipedia.org/wiki/Reserved_IP_addresses).
 - AWS Config utilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the **account** in which the Security Group became non-compliant. Alternatives:
-    - Use CloudTrail instead of AWS Config to alert on any SG Ingress rule change. This event will provide an IAM userName asssociated with the change, but an additional processing step, e.g. a Lambda function, will be needed to filter all Ingress events and then trigger the main Lambda function only when a port was opened to 0.0.0.0/0.
+    - Use CloudTrail instead of AWS Config to alert on any SG ingress rule change. This event will provide an IAM userName asssociated with the change, but an additional processing step, e.g. a Lambda function, will be needed to filter all ingress events and then trigger the main Lambda function only when a port was opened to 0.0.0.0/0.
     - Use a custom Rule with AWS Config that can be defined using Guard DSL. This option is enticing but it was dropped due to the additional time overhead for the implementation.  
