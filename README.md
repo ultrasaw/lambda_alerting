@@ -38,7 +38,7 @@ AWS_REGION="YOUR_REGION"
 ```
 
 ## Deployment
-After addressing the **Prerequisites** section, push to the main branch of your forked repository to trigger updates of the infrastructure via the following jobs (sequantial):
+After addressing the **Prerequisites** section, push to the main branch of your forked repository to trigger static code analys and update the infrastructure via the following jobs (sequantial):
 - Static analysis with `pylint`
 - Terraform code validation with `terraform validate`
 - Terraform plan creation with `terraform plan`
