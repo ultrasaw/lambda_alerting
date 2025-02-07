@@ -87,11 +87,11 @@ Modules provide abstraction over complex AWS resources, speeding up infrastructu
 Disadvantages include relying on an externally developed module, lack of documentation and inapplicable defaults.
 
 ## Potential Improvements
-- Set Up an SQS Dead Letter Queue (DLQ) for Failed Events: Configure another SQS queue as a DLQ to avoid losing messages if failures occur at the SQS consumer level.
-- Monitor SQS for Unprocessed Messages: Use CloudWatch metrics or AWS Lambda triggers to periodically check the SQS queue and alert on unprocessed events.
-- Implement an Automatic Reprocessing Mechanism: A second Lambda function or a scheduled job could consume messages from the failure SQS queue and attempt reprocessing automatically.
-- Conditional Retry Logic: Handle specific failure types with backoff and retry strategies within the Lambda function, instead of relying solely on AWS retry mechanisms.
-- SNS Subscription: Create an SNS subscription and optionally configure delivery status logging.
+- Configure another SQS queue as a DLQ to avoid losing messages if failures occur at the SQS consumer level.
+- Use CloudWatch metrics or AWS Lambda triggers to periodically check the SQS queue and alert on unprocessed events.
+- A second Lambda function or a scheduled job could consume messages from the failure SQS queue and attempt reprocessing automatically.
+- Handle specific failure types with backoff and retry strategies within the Lambda function, instead of relying solely on AWS retry mechanisms.
+- Create an SNS subscription and optionally configure delivery status logging.
 
 ## Limitations
 - Region Constraint: Solution is limited to the current region.
@@ -102,3 +102,5 @@ Disadvantages include relying on an externally developed module, lack of documen
 - Lambda Testing: No tests are implemented for the Lambda code.
 - GitHub Actions: Terraform initialization output is not cached, leading to longer job initialization times.
 - Terraform Plan Security: Uploading the Terraform plan as an artifact may pose a security risk if least-privilege principles are not enforced.
+
+## Appendix
