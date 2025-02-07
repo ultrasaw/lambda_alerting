@@ -88,7 +88,7 @@ Security Groups
     export VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text --region us-east-1)
     export SG_ID=$(aws ec2 create-security-group --group-name test-sg --description "test SG" --vpc-id $VPC_ID --query "GroupId" --output text --region us-east-1)
     ```
-- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group:
+- Open Any TCP/UDP Port to 0.0.0.0/0 on the Security Group:
     ```bash
     aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --region us-east-1
     ```
