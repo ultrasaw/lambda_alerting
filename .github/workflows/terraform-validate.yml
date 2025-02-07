@@ -2,11 +2,6 @@ name: Terraform Validate
 
 on:
   workflow_call:
-    secrets:
-      AWS_KEY:
-        required: true
-      AWS_SECRET:
-        required: true
 
 jobs:
   validate:
