@@ -15,8 +15,8 @@ module "lambda_function" {
   create_async_event_config = true
   attach_async_event_policy = true
 
-  maximum_event_age_in_seconds = 300
-  maximum_retry_attempts       = 1
+  maximum_event_age_in_seconds = var.lambda_event_age
+  maximum_retry_attempts       = var.lambda_retries
 
   allowed_triggers = {
     iam_rule = {

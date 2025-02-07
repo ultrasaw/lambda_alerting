@@ -14,14 +14,14 @@ def find_arn(obj):
             if isinstance(value, str) and value.startswith("arn:"):
                 return value
             result = find_arn(value)
-            if result and result != "N/A":
+            if result is not None:
                 return result
     elif isinstance(obj, list):
         for item in obj:
             result = find_arn(item)
-            if result and result != "N/A":
+            if result is not None:
                 return result
-    return "N/A"
+    return None
 
 def lambda_handler(event, context):
     """
@@ -31,33 +31,29 @@ def lambda_handler(event, context):
     logger.info("Received event: " + json.dumps(event, indent=2))
 
     detail = event.get('detail', {})
-    event_time = event.get('time', 'N/A')
+    event_time = event.get('time')
 
     if 'configRuleName' in detail:
-        # Extract details specific to AWS Config compliance change events
-        compliance_type = detail.get('newEvaluationResult', {}).get('complianceType', 'N/A')
+        compliance_type = detail.get('newEvaluationResult', {}).get('complianceType')
         annotation = detail.get('newEvaluationResult', {}).get('annotation', '')
-        action = f"{compliance_type}: {annotation}"
-        initiator = detail.get('awsAccountId', 'N/A')
-        resource_identifier = detail.get('resourceId', 'N/A')
+        action = f"{compliance_type}: {annotation}" if compliance_type else None
+        initiator = detail.get('awsAccountId')
+        resource_identifier = detail.get('resourceId')
     elif detail.get('eventSource') == 's3.amazonaws.com':
-        # Extract details specific to AWS S3 events
-        action = detail.get('eventName', 'N/A')
+        action = detail.get('eventName')
         user_identity = detail.get('userIdentity', {})
-        initiator = user_identity.get('userName', 'N/A')
+        initiator = user_identity.get('userName')
         resources = detail.get('resources', [])
-        resource_identifier = next((res.get('ARN', 'N/A') for res in resources if res.get('type') == 'AWS::S3::Bucket'), 'N/A')
+        resource_identifier = next((res.get('ARN') for res in resources if res.get('type') == 'AWS::S3::Bucket'), None)
     else:
-        # Extract general details
-        event_name = detail.get('eventName', 'N/A')
+        event_name = detail.get('eventName')
         action = event_name
         user_identity = detail.get('userIdentity', {})
-        initiator = user_identity.get('userName', 'N/A')
+        initiator = user_identity.get('userName')
         response_elements = detail.get('responseElements', {})
 
-        # If 'accessKey' exists, return its userName instead of ARN
         if 'accessKey' in response_elements:
-            resource_identifier = response_elements['accessKey'].get('userName', 'N/A')
+            resource_identifier = response_elements['accessKey'].get('userName')
         else:
             resource_identifier = find_arn(response_elements)
 
@@ -70,9 +66,9 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'body': json.dumps({
-            'Time': event_time,
-            'Action': action,
-            'Initiator': initiator,
-            'ResourceIdentifier': resource_identifier
+            'Time': event_time or "N/A",
+            'Action': action or "N/A",
+            'Initiator': initiator or "N/A",
+            'ResourceIdentifier': resource_identifier or "N/A"
         })
     }
