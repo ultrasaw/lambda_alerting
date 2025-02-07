@@ -1,0 +1,37 @@
+name: Terraform Validate
+
+on:
+  workflow_call:
+    secrets:
+      AWS_KEY:
+        required: true
+      AWS_SECRET:
+        required: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com.cn
+          role-to-assume: arn:aws:iam::303518111465:role/github_oidc_role
+          aws-region: us-east-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate

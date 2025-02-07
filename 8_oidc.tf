@@ -5,6 +5,7 @@ resource "aws_iam_openid_connect_provider" "oidc" {
     "sts.amazonaws.com",
   ]
 
+  # openssl s_client -servername token.actions.githubusercontent.com -showcerts -connect token.actions.githubusercontent.com:443 </dev/null 2>/dev/null | openssl x509 -fingerprint -noout | sed 's/://g' | awk -F= '{print tolower($2)}'
   thumbprint_list = ["74f3a68f16524f15424927704c9506f55a9316bd"]
 }
 
