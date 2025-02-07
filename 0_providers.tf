@@ -5,6 +5,12 @@ terraform {
       version = "~> 5.85.0"
     }
   }
+
+  backend "s3" {
+    bucket = "prerequisites-lambda-infra"
+    key    = "terraform/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {

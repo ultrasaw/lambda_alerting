@@ -10,10 +10,10 @@ module "aws_config" {
 
   managed_rules = {
     vpc-sg-open-only-to-authorized-ports = {
-      description  = "Do SGs with inbound '0.0.0.0/0' or '::/0' only allow connections on authorized ports. NON_COMPLIANT if such SGs don't have ports specified in the rule parameters.",
+      description  = "Check if SGs w/ inbound '0.0.0.0/0' or '::/0' only allow connections on authorized ports. NON_COMPLIANT if such SGs don't have ports specified in the rule parameters.",
       identifier   = "VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS",
       trigger_type = "PERIODIC"
-      input_parameters = ""
+      input_parameters = "" # no ports allow inbound '0.0.0.0/0' or '::/0'
       enabled      = true
 
       # tags have to be explicitly set in managed rules
@@ -27,6 +27,6 @@ module "aws_config" {
 }
 
 resource "aws_s3_bucket" "aws_config_delivery" {
-  bucket        = "aws-config-delivery-location"
+  bucket        = "aws-config-delivery-storage"
   force_destroy = true
 }

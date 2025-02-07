@@ -7,7 +7,7 @@ resource "aws_cloudtrail" "trail" {
 }
 
 resource "aws_s3_bucket" "cloudtrail_logs" {
-  bucket        = "cloudtrail-logs-eventbridge-lambda"
+  bucket        = "cloudtrail-logs-eventbridge-lambda-sns"
   force_destroy = true
 }
 
