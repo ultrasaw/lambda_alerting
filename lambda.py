@@ -30,27 +30,33 @@ def lambda_handler(event, context):
     # Log the full event for debugging
     logger.info("Received event: " + json.dumps(event, indent=2))
 
-    # Extract general details
-    event_time = event.get('time', 'N/A')
     detail = event.get('detail', {})
-    event_name = detail.get('eventName', 'N/A')
+    event_time = event.get('time', 'N/A')
 
-    # Extract initiator
-    user_identity = detail.get('userIdentity', {})
-    initiator = user_identity.get('userName', 'N/A')
-
-    # Extract responseElements
-    response_elements = detail.get('responseElements', {})
-
-    # If 'accessKey' exists, return its userName instead of ARN
-    if 'accessKey' in response_elements:
-        resource_identifier = response_elements['accessKey'].get('userName', 'N/A')
+    if 'configRuleName' in detail:
+        # Extract details specific to AWS Config compliance change events
+        compliance_type = detail.get('newEvaluationResult', {}).get('complianceType', 'N/A')
+        annotation = detail.get('newEvaluationResult', {}).get('annotation', '')
+        action = f"{compliance_type}: {annotation}"
+        initiator = detail.get('awsAccountId', 'N/A')
+        resource_identifier = detail.get('resourceId', 'N/A')
     else:
-        resource_identifier = find_arn(response_elements)
+        # Extract general details
+        event_name = detail.get('eventName', 'N/A')
+        action = event_name
+        user_identity = detail.get('userIdentity', {})
+        initiator = user_identity.get('userName', 'N/A')
+        response_elements = detail.get('responseElements', {})
+
+        # If 'accessKey' exists, return its userName instead of ARN
+        if 'accessKey' in response_elements:
+            resource_identifier = response_elements['accessKey'].get('userName', 'N/A')
+        else:
+            resource_identifier = find_arn(response_elements)
 
     # Log extracted details
     logger.info(f"Time: {event_time}")
-    logger.info(f"Action: {event_name}")
+    logger.info(f"Action: {action}")
     logger.info(f"Initiator: {initiator}")
     logger.info(f"ResourceIdentifier: {resource_identifier}")
 
@@ -58,7 +64,7 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps({
             'Time': event_time,
-            'Action': event_name,
+            'Action': action,
             'Initiator': initiator,
             'ResourceIdentifier': resource_identifier
         })

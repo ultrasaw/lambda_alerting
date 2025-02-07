@@ -26,7 +26,11 @@ module "lambda_function" {
     }
     sg_ingress_rule = {
       principal  = "events.amazonaws.com"
-      source_arn = module.eventbridge.eventbridge_rule_arns["sg_ingress_change"]
+      source_arn = module.eventbridge.eventbridge_rule_arns["sg_ingress_non_private_ip"]
+    }
+    s3_policy = {
+      principal  = "events.amazonaws.com"
+      source_arn = module.eventbridge.eventbridge_rule_arns["s3_bucket_policy_change"]
     }
   }
 
