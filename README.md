@@ -1,5 +1,5 @@
 # lambda_alerting
-## Overview
+## Project overview
 A serverless solution using AWS Lambda to monitor and alert on specific security-related events in an AWS environment. The infrastructure is defined with Terraform and deployed via GitHub Actions.
 
 AWS Services used:
