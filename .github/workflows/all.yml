@@ -2,8 +2,6 @@ name: TF Pipeline
 
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -31,12 +29,13 @@ jobs:
       id-token: write
       contents: read
     needs: tf-plan
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     uses: ./.github/workflows/terraform-apply.yml
 
   tf-destroy:
     permissions:
       id-token: write
       contents: read
-    if: github.event_name == 'workflow_dispatch'
+    needs: tf-plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/terraform-destroy.yml
