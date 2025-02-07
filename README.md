@@ -13,6 +13,7 @@ AWS Services used:
 - IAM - OIDC for GitHub Actions.
 
 ## Architecture diagram
+![Diagram Description](assets/infra.drawio.svg)
 
 ## Assumptions
 - Single Region Deployment: All resources are deployed within a single AWS region. Notifications are bound to this region.
