@@ -48,15 +48,65 @@ The `terraform destroy` job is also available, and can be triggered manually. Pu
 
 ## Testing
 To test the notification solution functionality:
-- Create a New IAM User, e.g. `aws iam create-user --user-name Timmy --region=us-east-1`
-- Create a New Access Key for an IAM User.
-- Modify a Bucket's:
-    - Policy
-    - CORS configuration
-    - Public access settings
-- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group.
 
-To confirm that each component of the notification system works as expected:
+IAM
+- Create a New IAM User:
+    ```bash
+    aws iam create-user --user-name Timmy --region=us-east-1
+    ```
+- Create a New Access Key for an IAM User:
+    ```bash
+    aws iam create-access-key --user-name Timmy --region us-east-1
+    ```
+---
+S3
+- Create a Bucket:
+    
+    ```bash
+    export BUCKET="test-lambda-functionality-bucket"
+    aws s3api create-bucket --bucket $BUCKET --region us-east-1
+    ```
+- Modify Policy (mind the Principal):
+
+    ```bash
+    aws s3api put-bucket-policy --bucket $BUCKET --policy file://bucket_policies/policy.json --region us-east-1
+    ```
+- Modify CORS configuration:
+
+    ```bash
+    aws s3api put-bucket-cors --bucket $BUCKET --cors-configuration file://bucket_policies/cors.json --region us-east-1
+    ```
+- Modify Public access settings:
+
+    ```bash
+    aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration BlockPublicAcls=false --region us-east-1
+    ```
+---
+Security Groups
+- Create a new Security Group in your default VPC
+    ```bash
+    export VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text --region us-east-1)
+    export SG_ID=$(aws ec2 create-security-group --group-name test-sg --description "test SG" --vpc-id $VPC_ID --query "GroupId" --output text --region us-east-1)
+    ```
+- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group.
+    ```bash
+    aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --region us-east-1
+    ```
+---
+
+Confirm Lambda invocations:
+```bash
+aws cloudwatch get-metric-statistics --namespace AWS/Lambda \
+  --metric-name Invocations \
+  --dimensions Name=FunctionName,Value=lambda_notify_sns \
+  --statistics Sum \
+  --start-time $(date -u -d '15 minutes ago' +'%Y-%m-%dT%H:%M:%SZ') \
+  --end-time $(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+  --period 300 \
+  --region us-east-1
+```
+---
+To confirm that each component of the notification system works as expected, one can also use the Console UI:
 - CloudTrail:
     - Navigate to Event history and filter by Event name or Resource Type (e.g., Event name: `CreateUser`; Resource Type: `AWS::IAM::User`).
 - EventBridge:
