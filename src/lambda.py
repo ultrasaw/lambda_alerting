@@ -25,50 +25,63 @@ def find_arn(obj):
 
 def lambda_handler(event, context):
     """
-    Event handler / logger.
+    Event handler / logger with error handling.
     """
-    # Log the full event for debugging
-    logger.info("Received event: " + json.dumps(event, indent=2))
+    try:
+        # Log the full event for debugging
+        logger.info("Received event: " + json.dumps(event, indent=2))
 
-    detail = event.get('detail', {})
-    event_time = event.get('time')
+        detail = event.get('detail', {})
+        event_time = event.get('time')
 
-    if 'configRuleName' in detail:
-        compliance_type = detail.get('newEvaluationResult', {}).get('complianceType')
-        annotation = detail.get('newEvaluationResult', {}).get('annotation', '')
-        action = f"{compliance_type}: {annotation}" if compliance_type else None
-        initiator = detail.get('awsAccountId')
-        resource_identifier = detail.get('resourceId')
-    elif detail.get('eventSource') == 's3.amazonaws.com':
-        action = detail.get('eventName')
-        user_identity = detail.get('userIdentity', {})
-        initiator = user_identity.get('userName')
-        resources = detail.get('resources', [])
-        resource_identifier = next((res.get('ARN') for res in resources if res.get('type') == 'AWS::S3::Bucket'), None)
-    else:
-        event_name = detail.get('eventName')
-        action = event_name
-        user_identity = detail.get('userIdentity', {})
-        initiator = user_identity.get('userName')
-        response_elements = detail.get('responseElements', {})
-
-        if 'accessKey' in response_elements:
-            resource_identifier = response_elements['accessKey'].get('userName')
+        if 'configRuleName' in detail:
+            compliance_type = detail.get('newEvaluationResult', {}).get('complianceType')
+            annotation = detail.get('newEvaluationResult', {}).get('annotation', '')
+            action = f"{compliance_type}: {annotation}" if compliance_type else None
+            initiator = detail.get('awsAccountId')
+            resource_identifier = detail.get('resourceId')
+        elif detail.get('eventSource') == 's3.amazonaws.com':
+            action = detail.get('eventName')
+            user_identity = detail.get('userIdentity', {})
+            initiator = user_identity.get('userName')
+            resources = detail.get('resources', [])
+            resource_identifier = next((res.get('ARN') for res in resources if res.get('type') == 'AWS::S3::Bucket'), None)
         else:
-            resource_identifier = find_arn(response_elements)
+            event_name = detail.get('eventName')
+            action = event_name
+            user_identity = detail.get('userIdentity', {})
+            initiator = user_identity.get('userName')
+            response_elements = detail.get('responseElements', {})
 
-    # Log extracted details
-    logger.info(f"Time: {event_time}")
-    logger.info(f"Action: {action}")
-    logger.info(f"Initiator: {initiator}")
-    logger.info(f"ResourceIdentifier: {resource_identifier}")
+            if 'accessKey' in response_elements:
+                resource_identifier = response_elements['accessKey'].get('userName')
+            else:
+                resource_identifier = find_arn(response_elements)
 
-    return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'Time': event_time or "N/A",
-            'Action': action or "N/A",
-            'Initiator': initiator or "N/A",
-            'ResourceIdentifier': resource_identifier or "N/A"
-        })
-    }
+        # Log extracted details
+        logger.info(f"Time: {event_time}")
+        logger.info(f"Action: {action}")
+        logger.info(f"Initiator: {initiator}")
+        logger.info(f"ResourceIdentifier: {resource_identifier}")
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'Time': event_time or "N/A",
+                'Action': action or "N/A",
+                'Initiator': initiator or "N/A",
+                'ResourceIdentifier': resource_identifier or "N/A"
+            })
+        }
+    except KeyError as e:
+        logger.error(f"Missing expected key: {e}")
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': f"Missing key: {e}"})
+        }
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': "Internal Server Error"})
+        }
