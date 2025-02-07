@@ -38,7 +38,7 @@ AWS_REGION="YOUR_REGION"
 ```
 
 ## Deployment
-After cloning the repository and addressing the **Prerequisites** section, simply pushing to the main branch will trigger updates to the infrastructure via the following jobs (sequantial):
+After cloning the repository and addressing the **Prerequisites** section, push to the main branch to trigger updates of the infrastructure via the following jobs (sequantial):
 - Static analysis with `pylint`
 - Terraform code validation with `terraform validate`
 - Terraform plan creation with `terraform plan`
@@ -47,7 +47,7 @@ After cloning the repository and addressing the **Prerequisites** section, simpl
 The `terraform destroy` job is also available, and can be triggered manually. Pushing to any other branch will only trigger the `pylint`, `terraform validate` and `terraform plan` jobs.
 
 ## Testing
-To test the notification solution functionality:
+Test the notification solution functionality with the following commands:
 
 IAM
 - Create a New IAM User:
@@ -83,12 +83,12 @@ S3
     ```
 ---
 Security Groups
-- Create a new Security Group in your default VPC
+- Create a new Security Group in your default VPC:
     ```bash
     export VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text --region us-east-1)
     export SG_ID=$(aws ec2 create-security-group --group-name test-sg --description "test SG" --vpc-id $VPC_ID --query "GroupId" --output text --region us-east-1)
     ```
-- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group.
+- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group:
     ```bash
     aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --region us-east-1
     ```
@@ -100,11 +100,23 @@ aws cloudwatch get-metric-statistics --namespace AWS/Lambda \
   --metric-name Invocations \
   --dimensions Name=FunctionName,Value=lambda_notify_sns \
   --statistics Sum \
-  --start-time $(date -u -d '15 minutes ago' +'%Y-%m-%dT%H:%M:%SZ') \
+  --start-time $(date -u -d '30 minutes ago' +'%Y-%m-%dT%H:%M:%SZ') \
   --end-time $(date -u +'%Y-%m-%dT%H:%M:%SZ') \
   --period 300 \
   --region us-east-1
 ```
+Confirm message publishing to SNS:
+```bash
+aws cloudwatch get-metric-statistics --namespace AWS/SNS \
+  --metric-name NumberOfMessagesPublished \
+  --dimensions Name=TopicName,Value=lambda-success-topic \
+  --statistics Sum \
+  --start-time $(date -u -d '30 minutes ago' +'%Y-%m-%dT%H:%M:%SZ') \
+  --end-time $(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+  --period 300 \
+  --region us-east-1
+```
+
 ---
 To confirm that each component of the notification system works as expected, one can also use the Console UI:
 - CloudTrail:
