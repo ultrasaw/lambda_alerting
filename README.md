@@ -20,11 +20,11 @@ Ensure access to the aforementioned AWS services, then:
 
 Create a bucket for Terraform state:
 ```bash
-export PREREQUISITES_BUCKET="prerequisites-lambda-infra"
+export PREREQUISITES_BUCKET="prerequisites-lambda-infra" # name has to be gloally unique
 aws s3api create-bucket --bucket $PREREQUISITES_BUCKET --region us-east-1
 aws s3api put-bucket-versioning --bucket $PREREQUISITES_BUCKET --versioning-configuration Status=Enabled
 ```
-Run terraform apply locally at least once to set up OIDC for GitHub Actions:
+Fork the repository, clone it, change line **29** in `8_oidc.tf` to your GH account and run terraform apply locally at least once to set up OIDC for GitHub Actions:
 ```bash
 export AWS_ACCESS_KEY_ID="YOUR_KEY"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET"
@@ -38,7 +38,7 @@ AWS_REGION="YOUR_REGION"
 ```
 
 ## Deployment
-After cloning the repository and addressing the **Prerequisites** section, push to the main branch to trigger updates of the infrastructure via the following jobs (sequantial):
+After addressing the **Prerequisites** section, push to the main branch of your forked repository to trigger updates of the infrastructure via the following jobs (sequantial):
 - Static analysis with `pylint`
 - Terraform code validation with `terraform validate`
 - Terraform plan creation with `terraform plan`
@@ -63,7 +63,7 @@ S3
 - Create a Bucket:
     
     ```bash
-    export BUCKET="test-lambda-functionality-bucket"
+    export BUCKET="test-lambda-functionality-bucket" # name has to be gloally unique
     aws s3api create-bucket --bucket $BUCKET --region us-east-1
     ```
 - Modify Policy (mind the Principal):
