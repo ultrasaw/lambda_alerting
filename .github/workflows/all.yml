@@ -12,25 +12,25 @@ jobs:
     with:
       python-version: '3.12'
 
-  validate:
+  tf-validate:
     permissions:
       id-token: write
       contents: read
     needs: static-analysis
     uses: ./.github/workflows/terraform-validate.yml
 
-  plan:
+  tf-plan:
     permissions:
       id-token: write
       contents: read
-    needs: validate
+    needs: tf-validate
     uses: ./.github/workflows/terraform-plan.yml
 
-  # apply:
-  #   needs: plan
+  # tf-apply:
+  #   needs: tf-plan
   #   if: github.event_name == 'push'
   #   uses: ./.github/workflows/terraform-apply.yml
 
-  # destroy:
+  # tf-destroy:
   #   if: github.event_name == 'workflow_dispatch'
   #   uses: ./.github/workflows/terraform-destroy.yml
