@@ -24,7 +24,7 @@ export PREREQUISITES_BUCKET="prerequisites-lambda-infra" # name has to be gloall
 aws s3api create-bucket --bucket $PREREQUISITES_BUCKET --region us-east-1
 aws s3api put-bucket-versioning --bucket $PREREQUISITES_BUCKET --versioning-configuration Status=Enabled
 ```
-Fork the repository, clone it, change line **29** in `8_oidc.tf` to your GH account and run terraform apply locally at least once to set up OIDC for GitHub Actions:
+Fork the repository, clone it, change line **29** in `8_oidc.tf` to your GH account and run `terraform apply` locally at least once to set up OIDC for GitHub Actions:
 ```bash
 export AWS_ACCESS_KEY_ID="YOUR_KEY"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET"
@@ -109,7 +109,7 @@ Confirm message publishing to SNS:
 ```bash
 aws cloudwatch get-metric-statistics --namespace AWS/SNS \
   --metric-name NumberOfMessagesPublished \
-  --dimensions Name=TopicName,Value=lambda-success-topic \
+  --dimensions Name=TopicName,Value=lambda_success_topic \
   --statistics Sum \
   --start-time $(date -u -d '30 minutes ago' +'%Y-%m-%dT%H:%M:%SZ') \
   --end-time $(date -u +'%Y-%m-%dT%H:%M:%SZ') \

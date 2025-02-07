@@ -1,3 +1,3 @@
 resource "aws_sqs_queue" "failure" {
-  name = "lambda-failure-queue"
+  name = "lambda_failure_queue"
 }
