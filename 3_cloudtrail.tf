@@ -11,11 +11,6 @@ resource "aws_s3_bucket" "cloudtrail_logs" {
   force_destroy = true
 }
 
-# resource "aws_s3_bucket_notification" "bucket_notification_cloudtrail" {
-#   bucket      = aws_s3_bucket.cloudtrail_logs.id
-#   eventbridge = true
-# }
-
 resource "aws_s3_bucket_policy" "cloudtrail_policy" {
   bucket = aws_s3_bucket.cloudtrail_logs.id
 

@@ -30,8 +30,3 @@ resource "aws_s3_bucket" "aws_config_delivery" {
   bucket        = "aws-config-delivery-location"
   force_destroy = true
 }
-
-# resource "aws_s3_bucket_notification" "bucket_notification_aws_config" {
-#   bucket      = aws_s3_bucket.aws_config_delivery.id
-#   eventbridge = true
-# }

@@ -37,7 +37,7 @@ module "eventbridge" {
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["s3.amazonaws.com"],
-          "eventName": ["PutBucketPolicy"]
+          "eventName": ["PutBucketPolicy", "PutBucketCors", "PutBucketPublicAccessBlock", "DeleteBucketPolicy", "DeleteBucketCors", "DeleteBucketPublicAccessBlock"]
         }
       })
     }
