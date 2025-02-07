@@ -50,11 +50,11 @@ The `terraform destroy` job is also available, and can be triggered manually. Pu
 Test the notification solution functionality with the following commands:
 
 IAM
-- Create a New IAM User:
+- Create a new IAM User:
     ```bash
     aws iam create-user --user-name Timmy --region=us-east-1
     ```
-- Create a New Access Key for an IAM User:
+- Create a new Access Key for an IAM User:
     ```bash
     aws iam create-access-key --user-name Timmy --region us-east-1
     ```
@@ -145,7 +145,7 @@ Disadvantages include relying on an externally developed module, lack of documen
 
 ## Assumptions and Limitations
 Lambda et al.:
-- Lambda functions are built locally.
+- Lambda functions are stored locally.
 - No tests are implemented for the Lambda code.
 - SNS subscriptions / Failed SQS queue out of scope.
 
