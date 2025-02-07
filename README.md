@@ -15,7 +15,7 @@ AWS Services used:
 - Single Region Deployment: All resources are deployed within a single AWS region. Notifications are bound to this region.
 - Cost Consideration: Cost is not a primary concern for this solution.
 - Service Access: Admin access to the aforementioned resources is available.
-- Language preference: Python was chosen due to speed of develpment. Also, more people have had experience with Python vs Golang in general.
+- Language preference: Python was chosen due to its speed of development. Additionally, more people have experience with Python compared to Golang in general.
 - S3 Bucket Policies: S3 ACLs omitted in favour of Bucket Policies, following AWS recommendations.
 - Terraform Code: Each Terraform file contains only the resources necessary for a single 'component' to function, prioritizing readability over compactness that comes with e.g. computed values, for loops etc.
 - Commit Practices: Commits may include changes of multiple files due to the project's scope and team size (1).
