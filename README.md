@@ -58,7 +58,8 @@ To test the notification solution functionality:
 - Modify a Bucket's:
     - Policy
     - CORS configuration
-- Open Any TCP/UDP Port to 0.0.0.0/0 on Any Security Group.
+    - Public access settings
+- Open Any TCP/UDP Port to 0.0.0.0/0 on any Security Group.
 
 To confirm that each component of the notification system works as expected:
 - CloudTrail:
