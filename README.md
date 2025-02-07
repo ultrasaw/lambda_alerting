@@ -1,15 +1,19 @@
 # lambda_alerting
+## Overview
 A serverless solution using AWS Lambda to monitor and alert on specific security-related events in an AWS environment. The infrastructure is defined with Terraform and deployed via GitHub Actions.
 
 AWS Services used:
 - Lambda - notifies SNS on mutliple security events.
-- EventBridge - EB Rules invoke Lambda functions.
+- EventBridge - EB Rules invoke Lambda function when triggered by Events from CloudTrail and AWS Config.
 - AWS Config - monitors Security Groups for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
 - CloudTrail - logs Management events, e.g. creation if IAM users.
 - SNS - destination for successful Lambda invocations.
 - SQS - destination for failed Lambda invocations. Failures could be processed by another AWS service at a later stage.
 - S3 - storage for CloudTrail & AWS Config.
 - IAM - OIDC for GitHub Actions.
+
+## Architecture diagram
+![Diagram Description](assets/infra.drawio.svg)
 
 ## Assumptions
 - Single Region Deployment: All resources are deployed within a single AWS region. Notifications are bound to this region.
