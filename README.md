@@ -15,16 +15,6 @@ AWS Services used:
 ## Architecture diagram
 ![Diagram Description](assets/infra.drawio.svg)
 
-## Assumptions
-- Single Region Deployment: All resources are deployed within a single AWS region. Notifications are bound to this region.
-- Cost Consideration: Cost is not a primary concern for this solution.
-- Service Access: Admin access to the aforementioned resources is available.
-- Language preference: Python was chosen due to its speed of development. Additionally, more people have experience with Python compared to Golang in general.
-- S3 Bucket Policies: S3 ACLs omitted in favour of Bucket Policies, following AWS recommendations.
-- Terraform Code: Each Terraform file contains only the resources necessary for a single 'component' to function, prioritizing readability over compactness that comes with e.g. computed values, for loops etc.
-- Commit Practices: Commits may include changes of multiple files due to the project's scope and team size (1).
-- Non-private IP range: For simplicity sake, Ingress of Security Groups will be monitored for TCP/UDP ports exposed to 0.0.0.0/0 only; this might not equate to a non-private IP range definition of IETF. See [Reserved IP ranges](https://en.wikipedia.org/wiki/Reserved_IP_addresses).
-
 ## Prerequisites
 Ensure access to the aforementioned AWS services, then:
 
@@ -91,23 +81,20 @@ Modules provide abstraction over complex AWS resources, speeding up infrastructu
 
 Disadvantages include relying on an externally developed module, lack of documentation and inapplicable defaults.
 
-## Potential Improvements
-- Configure another SQS queue as a DLQ to avoid losing messages if failures occur at the SQS consumer level.
-- Use CloudWatch metrics or AWS Lambda triggers to periodically check the SQS queue and alert on unprocessed events.
-- A second Lambda function or a scheduled job could consume messages from the failure SQS queue and attempt reprocessing automatically.
-- Handle specific failure types with backoff and retry strategies within the Lambda function, instead of relying solely on AWS retry mechanisms.
-- Create an SNS subscription and optionally configure delivery status logging.
-
-## Limitations
-- Solution is limited to the current region.
-- EventBridge's default event bus is used; configuring a custom bus requires additional CloudTrail setup.
+## Assumptions and Limitations
+Lambda et al.:
 - Lambda functions are built locally.
 - No tests are implemented for the Lambda code.
+- SNS subscriptions / Failed SQS queue out of scope.
+
+Terraform:
+- Each Terraform file contains only the resources necessary for a single 'component' to function, prioritizing readability over compactness that comes with e.g. computed values, for loops etc.
 - State locking is disabled, assuming a single contributor.
 - Uploading the Terraform plan as an artifact may pose a security risk if least-privilege principles are not enforced.
 - Terraform initialization output is not cached, leading to longer job initialization times in GitHub Actions jobs.
+
+Ingress rules monitoring:
+- Non-private IP range: For simplicity sake, Ingress of Security Groups will be monitored for TCP/UDP ports exposed to 0.0.0.0/0 only; this might not equate to a non-private IP range definition of IETF. See [Reserved IP ranges](https://en.wikipedia.org/wiki/Reserved_IP_addresses).
 - AWS Config utilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the **account** in which the Security Group became non-compliant. Alternatives:
     - Use CloudTrail instead of AWS Config to alert on any SG Ingress rule change. This event will provide an IAM userName asssociated with the change, but an additional processing step, e.g. a Lambda function, will be needed to filter all Ingress events and then trigger the main Lambda function only when a port was opened to 0.0.0.0/0.
     - Use a custom Rule with AWS Config that can be defined using Guard DSL. This option is enticing but it was dropped due to the additional time overhead for the implementation.  
-
-## Appendix
