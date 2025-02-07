@@ -13,9 +13,6 @@ jobs:
       python-version: '3.12'
 
   validate:
-    permissions:
-      id-token: write
-      contents: read
     needs: static-analysis
     uses: ./.github/workflows/terraform-validate.yml
 

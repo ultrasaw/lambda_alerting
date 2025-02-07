@@ -27,4 +27,4 @@ jobs:
 
       - name: Run pylint on specified files # --exit-zero to allow the job to pass even with low score
         run: |
-          pylint main.py modules/utils.py --exit-zero
+          pylint main.py src/lambda.py --exit-zero
