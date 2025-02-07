@@ -7,7 +7,7 @@ AWS Services used:
 - AWS Config - monitors Security Groups for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
 - CloudTrail - logs Management events, e.g. creation if IAM users.
 - SNS - destination for successful Lambda invocations.
-- SQS - estination for failed Lambda invocations. Failures could be processed by another AWS service at a later stage.
+- SQS - destination for failed Lambda invocations. Failures could be processed by another AWS service at a later stage.
 - S3 - storage for CloudTrail & AWS Config.
 - IAM - OIDC for GitHub Actions.
 
