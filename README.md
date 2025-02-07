@@ -4,7 +4,7 @@ A serverless solution using AWS Lambda to monitor and alert on specific security
 AWS Services used:
 - Lambda - notifies SNS on mutliple security events.
 - EventBridge - EB Rules invoke Lambda functions.
-- AWS Config - monitors Security Groups for Non-compliance (any TCP/UDP port open to 0.0.0.0/0).
+- AWS Config - monitors Security Groups for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
 - CloudTrail - logs Management events, e.g. creation if IAM users.
 - SNS - destination for successful Lambda invocations.
 - SQS - estination for failed Lambda invocations. Failures could be processed by another AWS service at a later stage.
@@ -78,7 +78,7 @@ During development, you can manually:
 
 - Test Lambda Function Invocations within the Console UI and inspect the respective CloudWatch logs.
 - Test EventBridge Rules by using sample events.
-- Test AWS Config Ingress Non-compliance by opening any Security Group TCP/UDP port to 0.0.0.0/0.
+- Test AWS Config Ingress non-compliance by opening any Security Group TCP/UDP port to 0.0.0.0/0.
 
 ## A note on using Terraform modules
 Modules provide abstraction over complex AWS resources, speeding up infrastructure setup with good defaults. For example, the 'lambda' module includes a boolean parameter `attach_create_log_group_permission` that controls whether to add the *create log group* permission to the CloudWatch logs policy.
@@ -97,7 +97,7 @@ Disadvantages include relying on an externally developed module, lack of documen
 - EventBridge Configuration: The default event bus is used; configuring a custom bus requires additional CloudTrail setup.
 - Lambda Build: Lambda functions are built locally.
 - State Locking: State locking is disabled, assuming a single contributor.
-- AWS Config Non-compliance Rules: Utilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the account in which the Security Group became Non-compliant.
+- AWS Config Non-compliance Rules: Utilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the account in which the Security Group became non-compliant.
 - Lambda Testing: No tests are implemented for the Lambda code.
 - GitHub Actions: Terraform initialization output is not cached, leading to longer job initialization times.
 - Terraform Plan Security: Uploading the Terraform plan as an artifact may pose a security risk if least-privilege principles are not enforced.
