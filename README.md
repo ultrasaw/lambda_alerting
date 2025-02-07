@@ -34,7 +34,7 @@ terraform plan && terraform apply --auto-approve
 In the GitHub repository, define the following Repository Variables:
 ```bash
 AWS_ROLE_TO_ASSUME="arn:aws:iam::YOUR_ACCOUNT_ID:role/github_oidc_role"
-AWS_REGION="YOUR_REGION"
+AWS_REGION="us-east-1"
 ```
 
 ## Deployment
