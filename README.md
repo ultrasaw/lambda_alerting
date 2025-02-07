@@ -145,7 +145,7 @@ Disadvantages include relying on an externally developed module, lack of documen
 
 ## Assumptions and Limitations
 Lambda et al.:
-- Lambda functions are stored locally.
+- Lambda function builds are stored locally (as opposed to S3).
 - No tests are implemented for the Lambda code.
 - SNS subscriptions / Failed SQS queue out of scope.
 
