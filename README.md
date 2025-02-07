@@ -4,7 +4,7 @@ A serverless solution using AWS Lambda to monitor and alert on specific security
 
 AWS Services used:
 - Lambda - notifies SNS on mutliple security events.
-- EventBridge - EB Rules invoke Lambda function when triggered by Events from CloudTrail and AWS Config.
+- EventBridge (formerly CloudWatch Events) - EB Rules invoke Lambda function when triggered by Events from CloudTrail and AWS Config.
 - AWS Config - monitors Security Groups for non-compliance (any TCP/UDP port open to 0.0.0.0/0).
 - CloudTrail - logs Management events, e.g. creation if IAM users.
 - SNS - destination for successful Lambda invocations.
@@ -23,6 +23,7 @@ AWS Services used:
 - S3 Bucket Policies: S3 ACLs omitted in favour of Bucket Policies, following AWS recommendations.
 - Terraform Code: Each Terraform file contains only the resources necessary for a single 'component' to function, prioritizing readability over compactness that comes with e.g. computed values, for loops etc.
 - Commit Practices: Commits may include changes of multiple files due to the project's scope and team size (1).
+- Non-private IP range: For simplicity sake, Ingress of Security Groups will be monitored for TCP/UDP ports exposed to 0.0.0.0/0 only; this might not equate to a non-private IP range definition of IETF. See [Reserved IP ranges](https://en.wikipedia.org/wiki/Reserved_IP_addresses).
 
 ## Prerequisites
 Ensure access to the aforementioned AWS services, then:
@@ -100,11 +101,13 @@ Disadvantages include relying on an externally developed module, lack of documen
 ## Limitations
 - Solution is limited to the current region.
 - EventBridge's default event bus is used; configuring a custom bus requires additional CloudTrail setup.
-- AWS Config tilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the **account** in which the Security Group became non-compliant.
 - Lambda functions are built locally.
 - No tests are implemented for the Lambda code.
 - State locking is disabled, assuming a single contributor.
 - Uploading the Terraform plan as an artifact may pose a security risk if least-privilege principles are not enforced.
 - Terraform initialization output is not cached, leading to longer job initialization times in GitHub Actions jobs.
+- AWS Config utilizes a managed Rule to check for 0.0.0.0/0 ingress; this rule does not specify who changed the Security Group ingress configuration, only the **account** in which the Security Group became non-compliant. Alternatives:
+    - Use CloudTrail instead of AWS Config to alert on any SG Ingress rule change. This event will provide an IAM userName asssociated with the change, but an additional processing step, e.g. a Lambda function, will be needed to filter all Ingress events and then trigger the main Lambda function only when a port was opened to 0.0.0.0/0.
+    - Use a custom Rule with AWS Config that can be defined using Guard DSL. This option is enticing but it was dropped due to the additional time overhead for the implementation.  
 
 ## Appendix
