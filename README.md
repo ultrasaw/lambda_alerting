@@ -24,11 +24,11 @@ export PREREQUISITES_BUCKET="prerequisites-lambda-infra" # name has to be gloall
 aws s3api create-bucket --bucket $PREREQUISITES_BUCKET --region us-east-1
 aws s3api put-bucket-versioning --bucket $PREREQUISITES_BUCKET --versioning-configuration Status=Enabled
 ```
-Fork the repository, clone it, change line **29** in `8_oidc.tf` to your GH account and run `terraform apply` locally at least once to set up OIDC for GitHub Actions:
+Fork the repository, clone it, change line **29** in `8_oidc.tf` to your GH account and create the infrastructure from your local shell at least once to set up OIDC for GitHub Actions:
 ```bash
 export AWS_ACCESS_KEY_ID="YOUR_KEY"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET"
-terraform plan && terraform apply --auto-approve
+terraform init && terraform plan && terraform apply --auto-approve
 ```
 
 In the GitHub repository, define the following Repository Variables:
